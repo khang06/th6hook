@@ -1,0 +1,2 @@
+#define TH6HOOK_API __declspec(dllexport)
+#define TH6HOOK_API __declspec(dllimport)
