@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{b0cb262b-f354-45aa-a5a6-6cb26bd3f13f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{f12407bb-00dd-44d7-a4c3-4dc3b0b2fde4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
@@ -28,24 +34,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_demo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_dx9.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_win32.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stuff.cpp">
+    <ClCompile Include="renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,27 +66,39 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="imconfig.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_internal.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_dx9.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_rectpack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_truetype.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_win32.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="common_structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="touhou6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

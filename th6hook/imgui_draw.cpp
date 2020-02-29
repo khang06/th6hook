@@ -815,8 +815,7 @@ void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_coun
 
     const ImVec2 uv = _Data->TexUvWhitePixel;
 
-    //if (Flags & ImDrawListFlags_AntiAliasedFill)
-    if (1 == 0)
+    if (Flags & ImDrawListFlags_AntiAliasedFill)
     {
         // Anti-aliased Fill
         const float AA_SIZE = 1.0f;
