@@ -1,4 +1,4 @@
-//#define INSTANT_RESET
+#define INSTANT_RESET
 
 #include <windows.h>
 #include <cstdio>
@@ -29,6 +29,8 @@ auto orig_EndScene = ((HRESULT(__stdcall*)(IDirect3DDevice9*))nullptr);
 auto window = (HWND)NULL;
 
 WNDPROC wndproc_orig = nullptr;
+
+bool custom_calc_chain_added = false;
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK wndproc_custom(const HWND hwnd, const UINT u_msg, const WPARAM w_param, const LPARAM l_param) {
@@ -178,14 +180,17 @@ HRESULT __stdcall custom_EndScene(IDirect3DDevice9* pDevice, const RECT* pSource
     ImGui::Render();
     ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
+    HRESULT ret = orig_EndScene(pDevice);
+    hook_EndScene.installHook();
+    return ret;
+}
+
+int __cdecl custom_chain_calc(void* a1) {
     // i don't want the bot to learn to rely on dying, this keeps resetting lives to zero
 #ifdef INSTANT_RESET
     g_game->lives = 0;
 #endif
-
-    HRESULT ret = orig_EndScene(pDevice);
-    hook_EndScene.installHook();
-    return ret;
+    return 1;
 }
 
 HWND __cdecl custom_create_window(HINSTANCE hInst) {
@@ -212,6 +217,15 @@ HWND __cdecl custom_create_window(HINSTANCE hInst) {
         d3d->Release();
         hook_EndScene.setSubs((void*)orig_EndScene, (void*)custom_EndScene);
         hook_EndScene.installHook();
+    }
+    if (!custom_calc_chain_added) {
+        // for anything that we want to run every in-game frame
+        chain_t* chain = new chain_t;
+        memset(chain, 0, sizeof(chain_t));
+        chain->calc = custom_chain_calc;
+        chain->flags |= 2;
+        add_calc_chain(g_chain, chain, 1000);
+        custom_calc_chain_added = true;
     }
     hook_create_window.installHook();
     return ret;

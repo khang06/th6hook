@@ -4,6 +4,7 @@
 #include "common_structs.h"
 
 /* game-specific structs */
+#pragma pack(push, 1)
 typedef struct {
     char gap0[0x550];
     vec3f size;
@@ -70,7 +71,6 @@ typedef struct {
 } item_handler_t;
 static_assert(sizeof(item_handler_t) == 0x2894C, "item_handler_t must be 0x2894C bytes long");
 
-#pragma pack(push, 1)
 typedef struct {
     char gap0[0xC6C];
     vec3f pos;
@@ -81,7 +81,6 @@ typedef struct {
     char gapE53[0x75];
 } enemy_t;
 static_assert(sizeof(enemy_t) == 0xEC8, "enemy_t must be 0xEC8 bytes long");
-#pragma pack(pop)
 
 typedef struct {
     char gap0[0xED0];
@@ -90,16 +89,32 @@ typedef struct {
 } enemy_handler_t;
 static_assert(sizeof(enemy_handler_t) == 0xEE5EC, "enemy_handler_t must be 0xEE5EC bytes long");
 
+typedef struct {
+    uint16_t priority;
+    uint16_t flags;
+    int(__cdecl* calc)(void*);
+    int(__cdecl* init)(void*);
+    int(__cdecl* destroy)(void*);
+    void* back;
+    void* next;
+    int unknown;
+    void* data;
+} chain_t;
+static_assert(sizeof(chain_t) == 0x20, "chain_t must be 0x20 bytes long");
+#pragma pack(pop)
+
 /* game-specific objects */
 auto g_game = (game_handler_t*)0x0069BCA0;
 auto g_bullet_handler = (bullet_handler_t*)0x005A5FF8;
 auto g_player_handler = (player_handler_t*)0x006CA628;
 auto g_item_handler = (item_handler_t*)0x0069E268;
 auto g_enemy_handler = (enemy_handler_t*)0x004B79C8;
+auto g_chain = (chain_t*)0x0069D918;
 
 /* functions to call */
 auto destroy_game_chains = ((void(__cdecl*)(void))0x0041C269);
 auto create_game = ((signed int(__cdecl*)(void))0x0041BA6A);
+auto add_calc_chain = ((void(__thiscall*)(void*, chain_t*, signed int))0x0041C860);
 
 /* functions to hook */
 auto calc_kill_collision = ((signed int(__thiscall*)(void*, vec3f*, vec3f*))0x00426C40);
