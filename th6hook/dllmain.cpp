@@ -51,6 +51,7 @@ int target_stage = 0;
 unsigned frame = 0;
 
 int __cdecl custom_chain_calc(void* a1) {
+    // only process every other frame
     if (frame % 2)
         return 1;
 
@@ -60,7 +61,7 @@ int __cdecl custom_chain_calc(void* a1) {
             auto pos = bullet.pos;
             auto size = bullet.size;
 
-            renderer->DrawRect(0, { pos.x, pos.y }, { size.x, size.y });
+            renderer->DrawRect(0, { pos.x, pos.y }, { size.x * 2, size.y * 2 });
         }
     }
 
@@ -92,9 +93,8 @@ int __cdecl custom_chain_calc(void* a1) {
         }
     }
 
-    // touhouwiki says player hitbox is a 5x5 box
-    // i haven't verified this myself, but i'll use it anyways
-    renderer->DrawRect(2, { g_player_handler->field_458.x, g_player_handler->field_458.y }, { 5, 5 });
+    // player "hitbox" (a lot larger than it is internally but easier to handle
+    renderer->DrawRect(2, { g_player_handler->field_458.x, g_player_handler->field_458.y }, { 15, 15 });
 
     for (auto item : g_item_handler->item) {
         if (item.active)
@@ -122,8 +122,9 @@ int __cdecl custom_chain_calc(void* a1) {
             game_done = true;
         }
         // add one to reward to reward staying alive
-        // int score_diff = (g_game->score - last_score) / 100 + 1;
+        //int score_diff = (g_game->score - last_score) / 10 + 1;
         int score_diff = 1;
+        //int score_diff = (g_game->score - last_score) / 100 + 1;
         if (score_diff < 0) {
             printf("wtf??? negative score diff\n");
             while (1)
@@ -227,10 +228,9 @@ signed int custom_create_game() {
     srand(timeGetTime());
     g_game->stage = rand() % 6;
     //g_game->stage = target_stage;
-    // reimu sucks
-    g_game->is_marisa = true;
+    g_game->is_marisa = false;
     g_game->weapon_type = true;
-    g_game->difficulty = 3; // lunatic
+    g_game->difficulty = rand() % 4; // randomized from easy to lunatic
     // g_game->field_1C = 1; // dunno what this does, seems to be 0 for title screen demo
     auto ret = create_game();
     hook_create_game.installHook();
@@ -320,7 +320,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         MAKE_HOOK(get_input);
 #endif
         MAKE_HOOK(check_if_already_running);
-        MAKE_HOOK(game_malloc);
+        //MAKE_HOOK(game_malloc);
 
         BYTE seven_byte_nop[] = {
             0x90,
@@ -340,6 +340,12 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         };
         BYTE resizewin_asm[] = {
             0x68, 0x00, 0x00, 0x8F, 0x10 // push 100A0000
+        };
+        BYTE config_asm[] = {
+            0x31, 0xc0, // xor eax, eax
+            0x90, // nop
+            0x90, // nop
+            0x90, // nop
         };
         // patch the 60fps limiter because it breaks randomly
 #ifndef STANDALONE
@@ -364,6 +370,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         // resizable window
         QPatch resizewin_patch((void*)0x00420D09, resizewin_asm, sizeof(resizewin_asm));
         resizewin_patch.patch();
+        // patch out the game writing to the config file
+        // running a bunch of game at the same time can result in a race condition
+        QPatch config_patch((void*)0x00424A6D, config_asm, sizeof(config_asm));
+        config_patch.patch();
 
 #ifndef STANDALONE
         // connect to tcp server

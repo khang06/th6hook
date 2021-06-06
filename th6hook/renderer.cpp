@@ -4,6 +4,7 @@
 Renderer::Renderer() {
     render = new char[WIDTH * HEIGHT * 4];
     downscaled = new char[SCALE_WIDTH * SCALE_HEIGHT * 4];
+    zipped = new char[SCALE_WIDTH * SCALE_HEIGHT * 4];
     contours = new int[HEIGHT * 2];
 #ifdef USE_SDL2
     scratch_sdl = new uint32_t[WIDTH * HEIGHT];
@@ -98,8 +99,8 @@ void Renderer::DrawLine(int layer, ImVec2 point1, ImVec2 point2, float size) {
 void Renderer::Present() {
     // downscale
     // http://tech-algorithm.com/articles/bilinear-image-scaling/
-    constexpr float x_ratio = 4;
-    constexpr float y_ratio = 4;
+    constexpr float x_ratio = ((float)(WIDTH - 1)) / SCALE_WIDTH;
+    constexpr float y_ratio = ((float)(HEIGHT - 1)) / SCALE_HEIGHT;
     for (int layer = 0; layer < 4; layer++) {
         int offset = 0;
         for (int i = 0; i < SCALE_HEIGHT; i++) {
@@ -108,7 +109,7 @@ void Renderer::Present() {
                 int y = y_ratio * i;
                 float x_diff = (x_ratio * j) - x;
                 float y_diff = (y_ratio * i) - y;
-                int index = (layer * SCALE_WIDTH * SCALE_HEIGHT) + y * WIDTH + x;
+                int index = (layer * WIDTH * HEIGHT) + y * WIDTH + x;
 
                 char A = render[index];
                 char B = render[index + 1];
@@ -122,6 +123,7 @@ void Renderer::Present() {
             }
         }
     }
+
 #ifdef USE_SDL2
     //const uint8_t* rust_render = renderer_get_render();
     for (int i = 0; i < SCALE_WIDTH * SCALE_HEIGHT; i++)
